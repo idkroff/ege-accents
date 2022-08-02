@@ -1,0 +1,95 @@
+.Container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.WordContainer {
+    font-size: 36px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.WordLayout {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.2s ease;
+    position: relative;
+}
+
+.LetterContainer {
+    padding: 4px 2px;
+    margin: 2px 0;
+    border-radius: var(--border-radius-default);
+    display: flex;
+    align-items: center;
+}
+
+.LetterContainer[data-vowel=true] {
+    padding: 4px 12px;
+    background-color: var(--secondary-color);
+    cursor: pointer;
+    margin-inline: 5px;
+}
+
+.LetterContainer[data-vowel=true][data-letterstyle='untouched'] {
+    background-color: initial;
+    padding: 4px 2px;
+}
+
+.LetterContainer[data-vowel=true][data-letterstyle='correct'] {
+    background-color: var(--green-color);
+    color: var(--font-white-color);
+}
+
+.LetterContainer[data-vowel=true][data-letterstyle='wrong'] {
+    background-color: var(--red-color);
+    color: var(--font-white-color);
+}
+
+.TaskInfoContainer {
+    position: absolute;
+    bottom: calc(100% + 20px);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.TaskInfo {
+    padding: 8px 10px;
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius-default);
+}
+
+.InfoTabsContainer {
+    position: absolute;
+    left: 15px;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.InfoTab {
+    border-radius: var(--border-radius-default);
+    background-color: var(--secondary-color);
+    padding: 6px 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 6px;
+}

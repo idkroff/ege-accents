@@ -1,0 +1,77 @@
+.Container {
+    width: calc(100% - 30px);
+    height: 100%;
+    padding: 0 15px 20px 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.Main {
+    max-width: 600px;
+    margin-top: 55px;
+}
+
+.RecsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.WordContainer {
+    padding: 6px 10px;
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius-default);
+}
+
+.WordContainer[data-wordstatus='correct'] {
+    border-left: 5px solid var(--green-color);
+}
+
+.WordContainer[data-wordstatus='error'] {
+    border-left: 5px solid var(--red-color);
+}
+
+.TypeSelectContainer {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.TypeSelect {
+    min-width: calc(50% - 25px);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--secondary-color);
+    padding: 6px 10px;
+    border-radius: var(--border-radius-default);
+    cursor: pointer;
+}
+
+.TitleContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 10px;
+    align-items: flex-start;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.TitleContainer > span {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.ClearIconContainer {
+    border-radius: var(--border-radius-default);
+    padding: 6px 8px 2px 8px;
+    font-size: 24px;
+    background-color: var(--secondary-color);
+    cursor: pointer;
+}

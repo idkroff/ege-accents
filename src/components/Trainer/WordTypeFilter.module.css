@@ -1,0 +1,48 @@
+.TitleContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 5px;
+}
+
+.Title {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: start;
+}
+
+.TypesList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.WordTypeContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius-default);
+    cursor: pointer;
+}
+
+.IconsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+}
+
+.IconContainer {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--border-radius-default);
+    background-color: var(--secondary-color);
+}

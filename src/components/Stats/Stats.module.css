@@ -1,0 +1,70 @@
+.Container {
+    width: calc(100% - 30px);
+    height: 100%;
+    padding-inline: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.Main {
+    max-width: 600px;
+    width: 100%;
+    margin-top: 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.Header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 10px;
+}
+
+.Header > span {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.ClearStatsIcon {
+    font-size: 24px;
+    cursor: pointer;
+    padding: 6px 8px 2px 8px;
+    border-radius: var(--border-radius-big);
+    background-color: var(--secondary-color);
+}
+
+.HistoryLink {
+    padding: 6px 10px;
+    border-radius: var(--border-radius-default);
+    background-color: var(--secondary-color);
+    display: inline;
+}
+
+.StatsDataContainer {
+    padding: 3px 6px;
+    border-radius: var(--border-radius-default);
+    background-color: var(--secondary-color);
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 1.8;
+}
+
+.CommonMisstakesContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.CommonMisstakesLayout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.CommonWrongWordContainer {
+    padding: 6px 10px;
+    border-radius: var(--border-radius-default);
+    background-color: var(--secondary-color);
+}
