@@ -4,19 +4,22 @@ import { LoaderContext } from '../../service/LoaderContext';
 
 import HistoryStyles from './History.module.css';
 import GoBack from '../GoBack';
-import ThemeSwitcher from '../ThemeSwitcher';
 import CheckBoxIcon from '../CheckBoxIcon';
 import ConfirmButton from '../ConfirmButton';
 import Delete from '@mui/icons-material/Delete';
 
 import Swal from '../../service/Swal';
 import CancelButton from "../CancelButton";
+import StorageInterface from "../../service/StorageInterface";
 
 class History extends Component {
     constructor() {
         super();
+
+        this.storage = new StorageInterface();
+
         this.state = {
-            history: (localStorage.getItem('history')) ? JSON.parse(localStorage.getItem('history')).reverse() : [],
+            history: this.storage.getHistoryData().reverse(),
             showCorrect: true,
             showWrong: true
         }
@@ -52,7 +55,7 @@ class History extends Component {
         this.setState({
             history: []
         }, Swal.close);
-        localStorage.setItem('history', '[]');
+        this.storage.setHistory([]);
     }
 
     requireClearConfirm() {
@@ -83,7 +86,6 @@ class History extends Component {
         return (
             <div className={HistoryStyles.Container}>
                 <GoBack />
-                <ThemeSwitcher />
                 <div className={HistoryStyles.Main}>
                     <div className={HistoryStyles.TitleContainer}>
                         <span>История выполнения заданий</span>

@@ -9,9 +9,6 @@ class ThemeSwitcher extends Component {
         return (
             <div 
                 style={{
-                    position: 'absolute',
-                    top: 15,
-                    right: 15,
                     padding: 6,
                     backgroundColor: 'var(--secondary-color)',
                     borderRadius: 'var(--border-radius-big)',

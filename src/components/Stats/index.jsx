@@ -2,7 +2,6 @@ import { Component } from 'react';
 import StatsStyles from './Stats.module.css';
 
 import GoBack from '../GoBack';
-import ThemeSwitcher from '../ThemeSwitcher';
 import Link from '../Link';
 import Delete from '@mui/icons-material/Delete';
 import { LoaderContext } from '../../service/LoaderContext';
@@ -10,10 +9,13 @@ import { LoaderContext } from '../../service/LoaderContext';
 import Swal from '../../service/Swal';
 import ConfirmButton from '../ConfirmButton';
 import CancelButton from '../CancelButton';
+import StorageInterface from '../../service/StorageInterface';
 
 class Stats extends Component {
     constructor() {
         super();
+
+        this.storage = new StorageInterface();
 
         this.state = {
             computedStats: this.getComputedStats()
@@ -27,7 +29,7 @@ class Stats extends Component {
     }
 
     getComputedStats() {
-        const statsData = JSON.parse(localStorage.getItem('stats'));
+        const statsData = this.storage.getStats();
         const computedStats = {};
 
         if (statsData?.wordCount && (statsData?.wordCount?.correct || statsData?.wordCount?.wrong)) {
@@ -109,7 +111,7 @@ class Stats extends Component {
         this.setState({
             computedStats: {}
         }, () => {
-            localStorage.setItem('stats', '{}');
+            this.storage.setZeroStats();
             Swal.close();
         });
     }
@@ -118,7 +120,6 @@ class Stats extends Component {
         return (
             <div className={StatsStyles.Container}>
                 <GoBack />
-                <ThemeSwitcher />
                 <div className={StatsStyles.Main}>
                     <div className={StatsStyles.StatsContainer}>
                         <div className={StatsStyles.Header}>

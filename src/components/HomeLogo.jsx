@@ -22,10 +22,7 @@ function HomeLogo() {
                 display: 'flex',
                 flexDirection: 'row',
                 flexWrap: 'nowrap',
-                gap: 6,
-                position: 'absolute',
-                top: 15,
-                left: 15,
+                gap: 6
             }}
         >
             <div

@@ -74,10 +74,6 @@
 }
 
 .InfoTabsContainer {
-    position: absolute;
-    left: 15px;
-    bottom: 15px;
-    right: 15px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;

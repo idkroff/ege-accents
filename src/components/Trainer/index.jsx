@@ -5,6 +5,7 @@ import ThemeSwitcher from '../ThemeSwitcher';
 import WordTypeFilter from './WordTypeFilter';
 import HomeLogo from '../HomeLogo';
 import ContinueButton from '../ContinueButton';
+import AccountLink from '../AccountLink';
 
 import { LoaderContext } from '../../service/LoaderContext';
 
@@ -12,63 +13,40 @@ import FilterAlt from '@mui/icons-material/FilterAlt';
 import Analytics from '@mui/icons-material/Analytics';
 
 import TrainerStyles from './Trainer.module.css';
-import glossary from './glossary.json';
 
 import Swal from '../../service/Swal';
+import ShallowLayout from '../ShallowLayout';
+
+import StorageInterface from '../../service/StorageInterface';
 
 class Trainer extends Component {
     constructor(props) {
         super(props);
-        
-        if (!localStorage.getItem('tasksPassed')) {
-            localStorage.setItem('tasksPassed', JSON.stringify([]));
-        }
-        this.tasksPassed = new Set(JSON.parse(localStorage.getItem('tasksPassed')));
-        this.taskListInitial = glossary.tasks;
-        this.wordTypes = glossary.wordTypes;
-        
-        if (!localStorage.getItem('stats')) {
-            localStorage.setItem('stats', JSON.stringify(this.zeroStats()));
-        }
 
-        if (!localStorage.getItem('history')) {
-            localStorage.setItem('history', '[]');
-        }
+        this.storage = new StorageInterface();
+        this.tasksPassed = this.storage.getTasksPassed();
 
         this.state = {
             showContinueButton: false,
-            currentWordTypes: (localStorage.getItem('currentWordTypes')) ? (
-                (JSON.parse(localStorage.getItem('currentWordTypes')).length) ? JSON.parse(localStorage.getItem('currentWordTypes')) : this.wordTypes
-            ) : this.wordTypes,
-            wordTypeFilterEnabled: (localStorage.getItem('wordTypeFilterEnabled')) ? JSON.parse(localStorage.getItem('wordTypeFilterEnabled')) : false,
-            stats: this.getStats()
-        }
+            currentWordTypes: this.storage.getCurrentWordTypes(),
+            stats: this.storage.getStats()
+        };
+        this.state.wordTypeFilterEnabled = this.state.currentWordTypes.length !== this.storage.wordTypes.length;
         this.state.currentTask = this.getTask();
 
         this.WordLayoutRef = createRef();
     }
 
-    zeroStats() {
-        return {
-            misstakes: [],
-            solutionTime: [],
-            wordCount: {
-                correct: 0,
-                wrong: 0
-            }
-        };
-    }
-
     static contextType = LoaderContext;
 
     taskList() {
-        let filteredTaskList = this.taskListInitial.map(task => task);
+        let filteredTaskList = this.storage.allTasks.map(task => task);
         if (this.state.currentWordTypes.length) filteredTaskList = filteredTaskList.filter(taskData => this.state.currentWordTypes.includes(taskData.wordType));
         return filteredTaskList;
     }
 
     getTask() {
-        const filteredTaskList = this.taskList().filter(taskData => !this.tasksPassed.has(taskData.id));;
+        const filteredTaskList = this.taskList().filter(taskData => !this.tasksPassed.has(taskData.id));
         if (!filteredTaskList.length)  {
             this.clearPassed();
             return this.getTask();
@@ -97,54 +75,34 @@ class Trainer extends Component {
         return taskData;
     }
 
-    getStats() {
-        const statsData = JSON.parse(localStorage.getItem('stats'));
-        const stats = {
-            wordCount: statsData.wordCount || {
-                correct: 0,
-                wrong: 0
-            }
-        }
-        return stats;
-    }
-
     updateStats(changer) {
         this.setState(state => {
             return {
                 stats: changer(JSON.parse(JSON.stringify(state.stats)))
             };
-        }, () => {
-            localStorage.setItem('stats', JSON.stringify(
-                Object.assign(JSON.parse(localStorage.getItem('stats')), this.state.stats)
-            ));
-        });
+        }, () => this.storage.setStats(this.state.stats));
     }
 
     clearPassed() {
         this.tasksPassed = new Set();
-        this.taskListInitial = glossary.tasks;
-        localStorage.setItem('tasksPassed', '[]');
+        this.storage.clearTasksPassed();
     }
 
     nextTask() {
-        this.WordLayoutRef.current.style.opacity = 0;
+        if (this.WordLayoutRef.current) this.WordLayoutRef.current.style.opacity = 0;
         setTimeout(() => {
             this.setState({
                 currentTask: this.getTask(),
                 showContinueButton: false
             });
-            this.WordLayoutRef.current.style.opacity = 1;
+            if (this.WordLayoutRef.current) this.WordLayoutRef.current.style.opacity = 1;
         }, 200);
     }
 
     addPassedTask() {
         const passedTaskId = this.state.currentTask.id;
         this.tasksPassed.add(passedTaskId);
-        localStorage.setItem('tasksPassed', JSON.stringify(
-            Array.from(
-                this.tasksPassed
-            )
-        ));
+        this.storage.addPassedTask(Array.from(this.tasksPassed));
     }
 
     onVowel(wordIndex, letterIndex) {
@@ -165,27 +123,14 @@ class Trainer extends Component {
         this.nextTask();
     }
 
-    writeStats(changer) {
-        const currentStats = Object.assign(this.zeroStats(), JSON.parse(localStorage.getItem('stats')));
-        if (!currentStats.misstakes) currentStats.misstakes = [];
-        if (!currentStats.solutionTime) currentStats.solutionTime = [];
-        localStorage.setItem('stats', JSON.stringify(
-            changer(currentStats)
-        ));
-    }
-
-    pushHistory(words) {
-        let historyData = localStorage.getItem('history');
-        if (historyData) historyData = JSON.parse(historyData)
-        else historyData = [];
-
-        historyData.push(...words);
-        localStorage.setItem('history', JSON.stringify(historyData));
-    }
-
     showWordTypeFilter() {
         Swal.show({
-            html: <WordTypeFilter wordTypes={this.wordTypes} currentWordTypes={this.state.currentWordTypes} onChange={(...data) => this.onWordTypesChange(...data)} onReset={() => this.onWordTypesReset()} />
+            html: <WordTypeFilter 
+                wordTypes={this.storage.wordTypes} 
+                currentWordTypes={this.state.currentWordTypes} 
+                onChange={(...data) => this.onWordTypesChange(...data)} 
+                onReset={() => this.onWordTypesReset()} 
+            />
         });
     }
 
@@ -203,22 +148,22 @@ class Trainer extends Component {
                     };
                 }, () => {
                     resolve(this.state.currentWordTypes);
-                    localStorage.setItem('currentWordTypes', JSON.stringify(this.state.currentWordTypes));
+                    this.storage.setCurrentWordTypes(this.state.currentWordTypes);
                     this.nextTask();
                 });
             } else {
-                if (!this.wordTypes.includes(wordType)) return;
+                if (!this.storage.wordTypes.includes(wordType)) return;
                 this.setState(state => {
                     let currentWordTypes = new Set(state.currentWordTypes);
                     currentWordTypes.add(wordType);
                     currentWordTypes = Array.from(currentWordTypes);
                     return {
                         currentWordTypes,
-                        wordTypeFilterEnabled: state.currentWordTypes.length !== (this.wordTypes.length - 1)
+                        wordTypeFilterEnabled: state.currentWordTypes.length !== (this.storage.wordTypes.length - 1)
                     };
                 }, () => {
                     resolve(this.state.currentWordTypes);
-                    localStorage.setItem('currentWordTypes', JSON.stringify(this.state.currentWordTypes));
+                    this.storage.setCurrentWordTypes(this.state.currentWordTypes);
                     this.nextTask();
                 });
             }
@@ -228,11 +173,11 @@ class Trainer extends Component {
     onWordTypesReset() {
         return new Promise(resolve => {
             this.setState({
-                currentWordTypes: this.wordTypes,
+                currentWordTypes: this.storage.wordTypes,
                 wordTypeFilterEnabled: false
             }, () => {
                 resolve(this.state.currentWordTypes);
-                localStorage.setItem('currentWordTypes', JSON.stringify(this.wordTypes));
+                this.storage.setCurrentWordTypes(this.storage.wordTypes);
                 this.nextTask();
             });
         });
@@ -240,7 +185,7 @@ class Trainer extends Component {
 
     componentDidUpdate() {
         if (!this.state.currentTask.finished && this.state.currentTask.words.every(wordData => wordData.answered)) {
-            this.writeStats(stats => {
+            this.updateStats(stats => {
                 stats.solutionTime.push(+((Date.now() - this.state.currentTask.generatedAt) / this.state.currentTask.words.length / 1000).toFixed(2));
                 if (this.state.currentTask.hasErrors) {
                     const misstakesData = this.state.currentTask.words
@@ -259,14 +204,7 @@ class Trainer extends Component {
                 return stats;
             });
 
-            this.pushHistory(this.state.currentTask.words);
-            this.updateStats(stats => {
-                this.state.currentTask.words.forEach(wordData => {
-                    if (wordData.correct) stats.wordCount.correct++;
-                    else stats.wordCount.wrong++;
-                });
-                return stats;
-            });
+            this.storage.pushHistory(this.state.currentTask.words);
 
             if (!this.state.currentTask.hasErrors) {
                 this.addPassedTask();
@@ -292,16 +230,24 @@ class Trainer extends Component {
         return (
             <div className={TrainerStyles.Container}>
                 <WordLayout taskData={this.state.currentTask} showContinueButton={this.state.showContinueButton} containerRef={this.WordLayoutRef} onContinue={() => this.onContinue()}  onVowel={(...data) => this.onVowel(...data)} />
-                <HomeLogo />
-                <ThemeSwitcher />
-                <InfoTabs 
-                    wordType={this.state.currentTask.wordType} 
-                    currentTaskNumber={Array.from(this.tasksPassed).filter(taskID => this.state.currentWordTypes.includes(this.taskListInitial.find(taskData => taskData.id === taskID).wordType)).length+1} 
-                    allTasksNumber={this.taskList().length} 
-                    filterOn={this.state.wordTypeFilterEnabled} 
-                    showWordTypeFilter={() => this.showWordTypeFilter()}
-                    correctWordsPercent={Math.round(this.state.stats.wordCount.correct / (this.state.stats.wordCount.correct + this.state.stats.wordCount.wrong) * 100) || 0} 
-                />
+                
+                <ShallowLayout type='lefttop'>
+                    <HomeLogo />
+                </ShallowLayout>
+                <ShallowLayout type='righttop'>
+                    <ThemeSwitcher />
+                    <AccountLink />
+                </ShallowLayout>
+                <ShallowLayout type='leftbottom' style={{ right: 15 }}>
+                    <InfoTabs 
+                        wordType={this.state.currentTask.wordType} 
+                        currentTaskNumber={Array.from(this.tasksPassed).filter(taskID => this.state.currentWordTypes.includes(this.storage.allTasks.find(taskData => taskData.id === taskID).wordType)).length+1} 
+                        allTasksNumber={this.taskList().length} 
+                        filterOn={this.state.wordTypeFilterEnabled} 
+                        showWordTypeFilter={() => this.showWordTypeFilter()}
+                        correctWordsPercent={Math.round(this.state.stats.wordCount.correct / (this.state.stats.wordCount.correct + this.state.stats.wordCount.wrong) * 100) || 0} 
+                    />
+                </ShallowLayout>
             </div>
         );
     }
