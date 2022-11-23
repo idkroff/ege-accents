@@ -14,10 +14,10 @@
 
 [data-theme="dark"] {
   --primary-color: #9A97F3;
-  --secondary-color: #27273f;
+  --secondary-color: #222230;
   --tertiary-color: #585878;
   --font-color: #e1e1ff;
-  --bg-color: #161625;
+  --bg-color: #1b1b25;
   --heading-color: #818cab;
 }
 

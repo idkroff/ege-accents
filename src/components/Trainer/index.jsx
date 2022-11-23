@@ -241,7 +241,7 @@ class Trainer extends Component {
                 <ShallowLayout type='leftbottom' style={{ right: 15 }}>
                     <InfoTabs 
                         wordType={this.state.currentTask.wordType} 
-                        currentTaskNumber={Array.from(this.tasksPassed).filter(taskID => this.state.currentWordTypes.includes(this.storage.allTasks.find(taskData => taskData.id === taskID).wordType)).length+1} 
+                        currentTaskNumber={Array.from(this.tasksPassed).filter(taskID => this.state.currentWordTypes.includes(this.storage.allTasks.find(taskData => taskData.id === taskID)?.wordType)).length+1} 
                         allTasksNumber={this.taskList().length} 
                         filterOn={this.state.wordTypeFilterEnabled} 
                         showWordTypeFilter={() => this.showWordTypeFilter()}
