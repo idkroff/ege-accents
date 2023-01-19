@@ -6,6 +6,7 @@ import WordTypeFilter from './WordTypeFilter';
 import HomeLogo from '../HomeLogo';
 import ContinueButton from '../ContinueButton';
 import AccountLink from '../AccountLink';
+import MenuBook from '@mui/icons-material/MenuBook';
 
 import { LoaderContext } from '../../service/LoaderContext';
 
@@ -231,8 +232,11 @@ class Trainer extends Component {
             <div className={TrainerStyles.Container}>
                 <WordLayout taskData={this.state.currentTask} showContinueButton={this.state.showContinueButton} containerRef={this.WordLayoutRef} onContinue={() => this.onContinue()}  onVowel={(...data) => this.onVowel(...data)} />
                 
-                <ShallowLayout type='lefttop'>
+                <ShallowLayout type='lefttop' style={{
+                    flexDirection: 'column'
+                }}>
                     <HomeLogo />
+                    <TheoryLink />
                 </ShallowLayout>
                 <ShallowLayout type='righttop'>
                     <ThemeSwitcher />
@@ -251,6 +255,30 @@ class Trainer extends Component {
             </div>
         );
     }
+}
+
+function TheoryLink() {
+    return (
+        <Link
+            to='/theory'
+            style={{
+                padding: '6px 10px',
+                borderRadius: 'var(--border-radius-big)',
+                backgroundColor: 'var(--secondary-color)',
+                fontSize: 28,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                gap: 10,
+                width: 'fit-content'
+            }}
+            className='themeBackground'
+        >
+            <MenuBook fontSize='inherit' />
+            <span style={{ fontSize: 20, fontWeight: 400 }}>Теория</span>
+        </Link>
+    );
 }
 
 function WordLayout({ taskData, onVowel, containerRef, showContinueButton, onContinue }) {
